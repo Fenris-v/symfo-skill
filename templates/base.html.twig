@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% include "base/head.html.twig" %}
+<body>
+{% include "base/header.html.twig" %}
+
+{% block body %}{% endblock %}
+
+{% include "base/footer.html.twig" %}
+
+{% block js %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+</body>
+</html>

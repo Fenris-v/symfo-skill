@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="row no-gutters border flex-md-row mb-4 shadow-sm bg-white featured-border">
+                    <div class="article-detail col-sm-12">
+                        <div class="col-sm-12 p-2">
+                            <div class="media d-flex align-content-center">
+                                <img class="article-detail-image align-self-start mr-3 rounded"
+                                     src="{{ asset(article['image']) }}">
+                                <div class="media-body d-inline-block align-self-center">
+                                    <h1 class="mb-2">
+                                        {{ article['title'] }}
+                                    </h1>
+                                    <div class="d-flex mb-2">
+                                        <div class="text-muted align-self-center">
+                                            <img class="article-author-img rounded-circle mr-2"
+                                                 src="https://robohash.org/флекс_абсолютович.jpg?set=set3">
+                                            Флекс Абсолютович
+                                        </div>
+                                        <div class="text-muted align-self-center ml-4"><i
+                                                    class="fas fa-clock size-is-"></i> 1 месяц назад
+                                        </div>
+                                    </div>
+                                    <div class="mb-2 d-flex">
+                                        <span class="badge badge-pill badge-secondary mr-2">Балбес</span>
+                                        <span class="badge badge-pill badge-secondary mr-2">Криворучка</span>
+                                        <span class="badge badge-pill badge-secondary mr-2">Рукопоп</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <div class="text-muted align-self-center article-detail-arrows">
+                                            <span data-item="likesCount">120</span>
+                                            <button data-item="likes" data-type="like" class="btn btn-success ml-3">
+                                                <i class="fas fa-arrow-up"></i>
+                                            </button>
+                                            <button data-item="likes" data-type="dislike" class="btn btn-danger">
+                                                <i class="fas fa-arrow-down"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-12 mt-2 mb-4">
+                            <p>Lorem ipsum <strong>кофе</strong> dolor sit amet, consectetur adipiscing elit, sed
+                                do eiusmod tempor incididunt <a href="{{ path('app_home') }}">Фронтенд Абсолютович</a> ut labore et dolore
+                                magna aliqua.
+                                Purus viverra accumsan in nisl. Diam vulputate ut pharetra sit amet aliquam. Faucibus a
+                                pellentesque sit amet porttitor eget dolor morbi non. Est ultricies integer quis auctor
+                                elit sed. Tristique nulla aliquet enim tortor at. Tristique et egestas quis ipsum.
+                                Consequat semper viverra nam
+                                libero. Lectus quam id leo in vitae turpis. In eu mi bibendum neque egestas congue
+                                quisque egestas diam. <strong>кофе</strong> blandit turpis cursus in hac habitasse
+                                platea dictumst quisque.</p>
+
+                            <p>Ullamcorper malesuada proin libero nunc consequat interdum varius sit amet. Odio
+                                pellentesque
+                                diam volutpat commodo sed egestas. Eget nunc lobortis mattis aliquam. Cursus vitae
+                                congue
+                                mauris rhoncus aenean vel. Pretium viverra suspendisse potenti nullam ac tortor vitae.
+                                A pellentesque sit amet porttitor eget dolor. Nisl nunc mi ipsum faucibus vitae. Purus
+                                sit amet
+                                luctus venenatis lectus magna fringilla urna. Sit amet tellus cras adipiscing enim.
+                                Euismod
+                                nisi porta lorem mollis aliquam ut porttitor leo.</p>
+
+                            <p>Morbi blandit cursus risus at ultrices. Adipiscing vitae proin sagittis nisl rhoncus
+                                mattis
+                                rhoncus. Sit amet commodo nulla facilisi. In fermentum et sollicitudin ac orci phasellus
+                                egestas tellus. Sit amet risus nullam eget felis. Dapibus ultrices in iaculis nunc sed
+                                augue lacus viverra. Dictum non consectetur a erat nam at. Odio ut enim blandit volutpat
+                                maecenas. Turpis cursus in hac habitasse platea. Etiam erat velit scelerisque in. Auctor
+                                neque vitae tempus quam pellentesque nec nam aliquam. Odio pellentesque diam volutpat
+                                commodo
+                                sed egestas egestas. Egestas dui id ornare arcu odio ut.</p>
+
+                        </div>
+
+
+                        <div class="col-sm-12 mb-4">
+                            <h3><i class="pr-3 far fa-comment text-secondary"></i>3 Комментария</h3>
+                            <hr>
+
+                            <div class="row mb-4">
+                                <div class="col-sm-12">
+                                    <div class="comment-container align-self-start col-sm-6">
+                                        <div class="form-group">
+                                            <textarea class="form-control" rows="2"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Комментировать</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-sm-12">
+                                    <div class="media">
+                                        <img class="align-self-start comment-img rounded-circle"
+                                             src="{{ asset('/images/profile.png') }}">
+                                        <div class="media-body align-self-start col-sm-6">
+                                            <b>Вью j эс</b>
+                                            <small>11 дней назад</small>
+                                            <br>
+                                            <span class="comment"> Adipisci quia dolores non vel vero suscipit. Et voluptates aut alias consequatur.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-sm-12">
+                                    <div class="media">
+                                        <img class="align-self-start comment-img rounded-circle"
+                                             src="{{ asset('/images/profile.png') }}">
+                                        <div class="media-body align-self-start col-sm-6">
+                                            <b>Фронтенд Фулстков</b>
+                                            <small>11 дней назад</small>
+                                            <br>
+                                            <span class="comment">Nunquam transferre equiso. Amicitia, elevatus, et tumultumque. Cur extum tolerare? Ubi est rusticus domus?</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col-sm-12">
+                                    <div class="media">
+                                        <img class="align-self-start comment-img rounded-circle"
+                                             src="{{ asset('/images/profile.png') }}">
+                                        <div class="media-body align-self-start col-sm-6">
+                                            <b>Барон Сосискин</b>
+                                            <small>11 дней назад</small>
+                                            <br>
+                                            <span class="comment">Yarr, ye jolly cannibal - set sails for death!</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
