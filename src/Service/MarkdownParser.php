@@ -25,8 +25,6 @@ class MarkdownParser
             $this->markdownLogger->info('Has');
         }
 
-        dump($this->debug);
-
         if ($this->debug) {
             return $this->parsedown->text($source);
         }
