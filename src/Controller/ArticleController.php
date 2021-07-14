@@ -3,12 +3,13 @@
 namespace App\Controller;
 
 use App\Homework\ArticleContentProvider;
+use App\Homework\ArticleContentProviderInterface;
 use App\Homework\ArticleProvider;
-use App\Service\MarkdownParser;
 use App\Service\SlackClient;
 use Http\Client\Exception;
 use Nexy\Slack\Exception\SlackApiException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -27,10 +28,41 @@ class ArticleController extends AbstractController
         );
     }
 
+    #[Route('/articles/article_content/', name: 'app_article_content')]
+    public function articleGenerate(
+        Request $request,
+        ArticleContentProviderInterface $articleContent
+    ): Response {
+        $args = $request->query->all();
+
+        if (isset($args['paragraphs']) && is_numeric($args['paragraphs'])) {
+            try {
+                $article = $articleContent->get(
+                $args['paragraphs'],
+                $args['word'] ?: null,
+                $args['wordsCount'] ?: 0
+            );
+            } catch (\Exception $exception) {
+                return $this->render(
+                    'articles/article_content.html.twig',
+                    [
+                        'error' => $exception->getMessage()
+                    ]
+                );
+            }
+        }
+
+        return $this->render(
+            'articles/article_content.html.twig',
+            [
+                'article' => $article ?? null,
+            ]
+        );
+    }
+
     /**
      * @param string $slug
      * @param ArticleProvider $articleProvider
-     * @param MarkdownParser $parser
      * @param SlackClient $slackClient
      * @param ArticleContentProvider $articleContent
      * @return Response
@@ -41,7 +73,6 @@ class ArticleController extends AbstractController
     public function show(
         string $slug,
         ArticleProvider $articleProvider,
-        MarkdownParser $parser,
         SlackClient $slackClient,
         ArticleContentProvider $articleContent
     ): Response {
@@ -69,13 +100,9 @@ class ArticleController extends AbstractController
 
         if ($hasWord) {
             shuffle($words);
-            $articleText = $parser->parse(
-                $articleContent->get(rand(2, 10), $words[0], rand(5, 20))
-            );
+            $articleText = $articleContent->get(rand(2, 10), $words[0], rand(5, 20));
         } else {
-            $articleText = $parser->parse(
-                $articleContent->get(rand(2, 10))
-            );
+            $articleText = $articleContent->get(rand(2, 10));
         }
 
         return $this->render(

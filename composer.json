@@ -9,6 +9,7 @@
         "ext-iconv": "*",
         "demontpx/parsedown-bundle": "^3.0",
         "http-interop/http-factory-guzzle": "^1.0",
+        "nesbot/carbon": "^2.50",
         "nexylan/slack-bundle": "^2.3",
         "php-http/guzzle6-adapter": "^2.0",
         "sensio/framework-extra-bundle": "^6.1",
@@ -28,6 +29,7 @@
         "symfony/webpack-encore-bundle": "^1.12",
         "symfony/yaml": "5.3.*",
         "twig/extra-bundle": "^2.12|^3.0",
+        "twig/string-extra": "^3.3",
         "twig/twig": "^2.12|^3.0"
     },
     "config": {
