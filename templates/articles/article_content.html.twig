@@ -5,7 +5,7 @@
 {% block body %}
     <div class="container">
         <div class="row">
-            {% if error is defined %}
+            {% if error %}
                 <div class="col-12">
                     <div class="alert alert-danger" role="alert">
                         {{ error }}
@@ -13,7 +13,7 @@
                 </div>
             {% endif %}
 
-            {% if article is defined and article %}
+            {% if article %}
                 <div class="col-12">
                     <div class="alert alert-success" role="alert">
                         Статья успешно создана
@@ -25,8 +25,10 @@
                 <div class="border flex-md-row mb-4 shadow-sm bg-white p-4">
                     <form method="get" class="mb-5">
                         <div class="form-group">
-                            <label for="paragraphs">Количество параграфов</label>
-                            <input name="paragraphs" id="paragraphs"
+                            <label for="paragraphs">
+                                Количество параграфов <span class="text-danger">*</span>
+                            </label>
+                            <input name="paragraphs" id="paragraphs" required
                                    type="number" class="form-control"
                                    value="{{ app.request.query.get('paragraphs') }}">
                         </div>
@@ -44,7 +46,7 @@
                         <button type="submit" class="btn btn-primary">Создать</button>
                     </form>
 
-                    {% if article is defined and article %}
+                    {% if article %}
                         {{ article | cached_markdown }}
                     {% endif %}
                 </div>

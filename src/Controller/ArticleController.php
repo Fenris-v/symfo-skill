@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Exception\GenerateException;
 use App\Homework\ArticleContentProvider;
 use App\Homework\ArticleContentProviderInterface;
 use App\Homework\ArticleProvider;
@@ -35,29 +36,29 @@ class ArticleController extends AbstractController
     ): Response {
         $args = $request->query->all();
 
-        if (isset($args['paragraphs']) && is_numeric($args['paragraphs'])) {
-            try {
+        try {
+            if (!empty($args) && (!isset($args['paragraphs']) || !$args['paragraphs'])) {
+                throw new GenerateException('Поле "Количество параграфов" является обязательным');
+            }
+
+            if (isset($args['paragraphs'])) {
                 $article = $articleContent->get(
-                $args['paragraphs'],
-                $args['word'] ?: null,
-                $args['wordsCount'] ?: 0
-            );
-            } catch (\Exception $exception) {
-                return $this->render(
-                    'articles/article_content.html.twig',
-                    [
-                        'error' => $exception->getMessage()
-                    ]
+                    $args['paragraphs'],
+                    $args['word'] ?: null,
+                    $args['wordsCount'] ?: 0
                 );
             }
+        } catch (GenerateException $exception) {
+            $error = $exception->getMessage();
+        } finally {
+            return $this->render(
+                'articles/article_content.html.twig',
+                [
+                    'article' => $article ?? null,
+                    'error' => $error ?? null
+                ]
+            );
         }
-
-        return $this->render(
-            'articles/article_content.html.twig',
-            [
-                'article' => $article ?? null,
-            ]
-        );
     }
 
     /**
@@ -67,7 +68,7 @@ class ArticleController extends AbstractController
      * @param ArticleContentProvider $articleContent
      * @return Response
      * @throws Exception
-     * @throws SlackApiException
+     * @throws GenerateException|SlackApiException
      * @Route("/articles/{slug}/", name="app_article_show")
      */
     public function show(
