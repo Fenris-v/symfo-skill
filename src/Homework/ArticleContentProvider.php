@@ -2,7 +2,7 @@
 
 namespace App\Homework;
 
-use Symfony\Component\Config\Definition\Exception\Exception;
+use App\Exception\GenerateException;
 
 class ArticleContentProvider implements ArticleContentProviderInterface
 {
@@ -21,13 +21,13 @@ class ArticleContentProvider implements ArticleContentProviderInterface
     {
     }
 
-
     /**
      * Генерирует текст статьи
      * @param int $paragraphs - количество абзацев
      * @param string|null $word - слово, которое должно содержаться в тексте
      * @param int $wordsCount - количество повторений этого слова
      * @return string
+     * @throws GenerateException
      */
     public function get(
         int $paragraphs,
@@ -63,9 +63,14 @@ class ArticleContentProvider implements ArticleContentProviderInterface
      * Генерирует текст
      * @param int $paragraphs - количество абзацев итогового текста
      * @return string
+     * @throws GenerateException
      */
     private function generateText(int $paragraphs): string
     {
+        if ($paragraphs <= 0) {
+            throw new GenerateException('Количество параграфов должно быть больше нуля');
+        }
+
         $result = [];
         for ($i = 0; $i < $paragraphs; $i++) {
             shuffle($this->text);
@@ -81,6 +86,7 @@ class ArticleContentProvider implements ArticleContentProviderInterface
      * @param string $word - слово, которое нужно вшить
      * @param int $wordsCount - количество повторений слова
      * @return string
+     * @throws GenerateException
      */
     private function modifyText(string $text, string $word, int $wordsCount): string
     {
@@ -89,7 +95,7 @@ class ArticleContentProvider implements ArticleContentProviderInterface
         $length = count($text) - 1;
 
         if ($wordsCount >= $length) {
-            throw new Exception('So many words');
+            throw new GenerateException('Задано слишком много повторений слова');
         }
 
         for ($i = 0; $i < $wordsCount; $i++) {

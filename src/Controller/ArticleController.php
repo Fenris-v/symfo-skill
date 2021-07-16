@@ -2,13 +2,15 @@
 
 namespace App\Controller;
 
+use App\Exception\GenerateException;
 use App\Homework\ArticleContentProvider;
+use App\Homework\ArticleContentProviderInterface;
 use App\Homework\ArticleProvider;
-use App\Service\MarkdownParser;
 use App\Service\SlackClient;
 use Http\Client\Exception;
 use Nexy\Slack\Exception\SlackApiException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -27,21 +29,51 @@ class ArticleController extends AbstractController
         );
     }
 
+    #[Route('/articles/article_content/', name: 'app_article_content')]
+    public function articleGenerate(
+        Request $request,
+        ArticleContentProviderInterface $articleContent
+    ): Response {
+        $args = $request->query->all();
+
+        try {
+            if (!empty($args) && (!isset($args['paragraphs']) || !$args['paragraphs'])) {
+                throw new GenerateException('Поле "Количество параграфов" является обязательным');
+            }
+
+            if (isset($args['paragraphs'])) {
+                $article = $articleContent->get(
+                    $args['paragraphs'],
+                    $args['word'] ?: null,
+                    $args['wordsCount'] ?: 0
+                );
+            }
+        } catch (GenerateException $exception) {
+            $error = $exception->getMessage();
+        } finally {
+            return $this->render(
+                'articles/article_content.html.twig',
+                [
+                    'article' => $article ?? null,
+                    'error' => $error ?? null
+                ]
+            );
+        }
+    }
+
     /**
      * @param string $slug
      * @param ArticleProvider $articleProvider
-     * @param MarkdownParser $parser
      * @param SlackClient $slackClient
      * @param ArticleContentProvider $articleContent
      * @return Response
      * @throws Exception
-     * @throws SlackApiException
+     * @throws GenerateException|SlackApiException
      * @Route("/articles/{slug}/", name="app_article_show")
      */
     public function show(
         string $slug,
         ArticleProvider $articleProvider,
-        MarkdownParser $parser,
         SlackClient $slackClient,
         ArticleContentProvider $articleContent
     ): Response {
@@ -69,13 +101,9 @@ class ArticleController extends AbstractController
 
         if ($hasWord) {
             shuffle($words);
-            $articleText = $parser->parse(
-                $articleContent->get(rand(2, 10), $words[0], rand(5, 20))
-            );
+            $articleText = $articleContent->get(rand(2, 10), $words[0], rand(5, 20));
         } else {
-            $articleText = $parser->parse(
-                $articleContent->get(rand(2, 10))
-            );
+            $articleText = $articleContent->get(rand(2, 10));
         }
 
         return $this->render(

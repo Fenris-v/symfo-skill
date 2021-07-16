@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Homework\ArticleContentProviderInterface;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ArticleController extends AbstractController
 {
-    #[Route('/api/v1/article_content/', name: 'api_article', methods: 'POST')]
+    #[Route('/api/v1/article_content/', name: 'app_api_article', methods: 'POST')]
     public function index(
         ArticleContentProviderInterface $articleContent
     ): Response {
@@ -26,22 +27,22 @@ class ArticleController extends AbstractController
             );
         }
 
-        if (!is_numeric($paragraphs) || (int)$paragraphs <= 0) {
+        try {
             return $this->json(
                 [
-                    'error' => 'Аргумент paragraphs должен быть числом больше нуля'
+                    'text' => $articleContent->get(
+                        $paragraphs,
+                        $word ?? null,
+                        $wordsCount ?? 0
+                    )
+                ]
+            );
+        } catch (Exception $exception) {
+            return $this->json(
+                [
+                    'error' => $exception->getMessage()
                 ]
             );
         }
-
-        return $this->json(
-            [
-                'text' => $articleContent->get(
-                    $paragraphs,
-                    $word ?? null,
-                    $wordsCount ?? 0
-                )
-            ]
-        );
     }
 }
