@@ -2,7 +2,8 @@
 
 namespace App\Controller;
 
-use Psr\Log\LoggerInterface;
+use App\Entity\Article;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -10,26 +11,28 @@ use Symfony\Component\Routing\Annotation\Route;
 class ArticleLikeController extends AbstractController
 {
     /**
-     * @param int $id
-     * @param LoggerInterface $logger
+     * @param Article $article
+     * @param EntityManagerInterface $em
      * @return JsonResponse
-     * @Route("/articles/{id<\d+>}/like/", methods="POST", name="app_article_like")
+     * @Route("/articles/{slug}/vote/up/", methods="POST", name="app_article_like")
      */
-    public function like(int $id, LoggerInterface $logger): JsonResponse
+    public function like(Article $article, EntityManagerInterface $em): JsonResponse
     {
-            $logger->info('Like');
-            return $this->json(['likes' => rand(121, 200)]);
+        $article->like();
+        $em->flush();
+        return $this->json(['likes' => $article->getVoteCount()]);
     }
 
     /**
-     * @param int $id
-     * @param LoggerInterface $logger
+     * @param Article $article
+     * @param EntityManagerInterface $em
      * @return JsonResponse
-     * @Route("/articles/{id<\d+>}/dislike/", methods="POST", name="app_article_dislike")
+     * @Route("/articles/{slug}/vote/down/", methods="POST", name="app_article_dislike")
      */
-    public function dislike(int $id, LoggerInterface $logger): JsonResponse
+    public function dislike(Article $article, EntityManagerInterface $em): JsonResponse
     {
-        $logger->info('Dislike');
-        return $this->json(['likes' => rand(0, 119)]);
+        $article->dislike();
+        $em->flush();
+        return $this->json(['likes' => $article->getVoteCount()]);
     }
 }

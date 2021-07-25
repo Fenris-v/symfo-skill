@@ -1,6 +1,7 @@
 {% extends 'base_content.html.twig' %}
 
-{% block title %}{{ article['title'] }}{% endblock %}
+{% block title %}{{ article.title }} - {{ sitename }}{% endblock %}
+{% block keywords %}{{ article.keywords }}{% endblock %}
 
 {% block content_row_class %}{{ parent() }} no-gutters featured-border{% endblock %}
 {% block content_col_class %}article-detail{% endblock %}
@@ -8,21 +9,26 @@
 {% block content %}
     <div class="col-12 p-2">
         <div class="media d-flex align-content-center">
-            <img class="article-detail-image align-self-start mr-3 rounded"
-                 src="{{ asset(article['image']) }}">
+            {% if article.imageFilename %}
+                <img class="article-detail-image align-self-start mr-3 rounded"
+                     src="{{ asset(article.imageFilename) }}">
+            {% endif %}
             <div class="media-body d-inline-block align-self-center">
                 <h1 class="mb-2">
-                    {{ article['title'] }}
+                    {{ article.title }}
                 </h1>
                 <div class="d-flex mb-2">
                     <div class="text-muted align-self-center">
                         <img class="article-author-img rounded-circle mr-2"
                              src="https://robohash.org/флекс_абсолютович.jpg?set=set3">
-                        Флекс Абсолютович
+                        {{ article.author }}
                     </div>
-                    <div class="text-muted align-self-center ml-4"><i
-                                class="fas fa-clock size-is-"></i> 1 месяц назад
-                    </div>
+                    {% if article.publishedAt %}
+                        <div class="text-muted align-self-center ml-4">
+                            <i class="fas fa-clock size-is-"></i>
+                            {{ article.publishedAt | ago }}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="mb-2 d-flex">
                     <span class="badge badge-pill badge-secondary mr-2">Балбес</span>
@@ -31,11 +37,18 @@
                 </div>
                 <div class="mb-2">
                     <div class="text-muted align-self-center article-detail-arrows">
-                        <span data-item="likesCount">120</span>
-                        <button data-item="likes" data-type="like" class="btn btn-success ml-3">
+                        <span data-item="likesCount"
+                              class="{{ article.voteCount > 0 ? 'text-success' : 'text-danger' }}">
+                            {{ article.voteCount }}
+                        </span>
+                        <button data-item="likes" data-type="like"
+                                data-href="{{ path('app_article_like', {slug: article.slug}) }}"
+                                class="btn btn-success ml-3">
                             <i class="fas fa-arrow-up"></i>
                         </button>
-                        <button data-item="likes" data-type="dislike" class="btn btn-danger">
+                        <button data-item="likes" data-type="dislike"
+                                data-href="{{ path('app_article_dislike', {slug: article.slug}) }}"
+                                class="btn btn-danger">
                             <i class="fas fa-arrow-down"></i>
                         </button>
                     </div>
@@ -45,7 +58,7 @@
     </div>
 
     <div class="col-12 mt-2 mb-4">
-        {{ articleContent | cached_markdown }}
+        {{ article.body | cached_markdown }}
     </div>
 
     <div class="col-sm-12 mb-4">
