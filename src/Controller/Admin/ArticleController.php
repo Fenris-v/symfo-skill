@@ -48,14 +48,14 @@ class ArticleController extends AbstractController
 
         $article = new Article();
 
-        foreach ($request->request->all() as $key => $item) {
-            if (!$item) {
-                continue;
-            }
-
-            $method = "set$key";
-            $article->$method($item);
-        }
+        $article->setTitle($request->request->get('title'));
+        $article->setSlug($request->request->get('slug'));
+        $article->setDescription($request->request->get('description'));
+        $article->setAuthor($request->request->get('author'));
+        $article->setKeywords($request->request->get('keywords'));
+        $article->setVoteCount($request->request->get('voteCount') ?: 0);
+        $article->setImageFilename($request->request->get('imageFilename'));
+        $article->setPublishedAt($request->request->get('publishedAt'));
 
         $word = null;
         $repeat = 0;
