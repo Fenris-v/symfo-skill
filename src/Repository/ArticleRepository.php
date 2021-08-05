@@ -20,42 +20,55 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
-     /**
-      * @return Article[] Returns an array of Article objects
-      */
+    public function getBySlug($slug)
+    {
+        return $this->getOrCreateQueryBuilder()
+            ->andWhere('a.slug=:slug')
+            ->setParameter('slug', $slug)
+            ->innerJoin('a.comments', 'c')
+            ->addSelect('c')
+            ->getQuery()
+            ->getResult()[0];
+    }
+
+    /**
+     * @return Article[] Returns an array of Article objects
+     */
     public function findLatestPublished(): array
     {
         return $this->published($this->latest())
+            ->leftJoin('a.comments', 'c')
+            ->addSelect('c')
             ->getQuery()
             ->getResult();
     }
 
     /**
-     * @param QueryBuilder|null $builder
+     * @param QueryBuilder|null $qb
      * @return QueryBuilder
      */
-    private function published(?QueryBuilder $builder = null): QueryBuilder
+    private function published(?QueryBuilder $qb = null): QueryBuilder
     {
-        return $this->getOrCreateQueryBuilder($builder)
-            ->andWhere('art.publishedAt IS NOT NULL');
+        return $this->getOrCreateQueryBuilder($qb)
+            ->andWhere('a.publishedAt IS NOT NULL');
     }
 
     /**
-     * @param QueryBuilder|null $builder
+     * @param QueryBuilder|null $qb
      * @return QueryBuilder
      */
-    private function getOrCreateQueryBuilder(?QueryBuilder $builder): QueryBuilder
+    private function getOrCreateQueryBuilder(?QueryBuilder $qb = null): QueryBuilder
     {
-        return $builder ?? $this->createQueryBuilder('art');
+        return $qb ?? $this->createQueryBuilder('a');
     }
 
     /**
-     * @param QueryBuilder|null $builder
+     * @param QueryBuilder|null $qb
      * @return QueryBuilder
      */
-    private function latest(?QueryBuilder $builder = null): QueryBuilder
+    private function latest(?QueryBuilder $qb = null): QueryBuilder
     {
-        return $this->getOrCreateQueryBuilder($builder)
-            ->orderBy('art.publishedAt', 'DESC');
+        return $this->getOrCreateQueryBuilder($qb)
+            ->orderBy('a.publishedAt', 'DESC');
     }
 }

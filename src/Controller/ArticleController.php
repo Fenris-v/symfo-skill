@@ -6,6 +6,7 @@ use App\Entity\Article;
 use App\Exception\GenerateException;
 use App\Homework\ArticleContentProviderInterface;
 use App\Repository\ArticleRepository;
+use App\Repository\CommentRepository;
 use App\Service\SlackClient;
 use Http\Client\Exception;
 use Nexy\Slack\Exception\SlackApiException;
@@ -18,17 +19,24 @@ class ArticleController extends AbstractController
 {
     /**
      * @param ArticleRepository $repository
+     * @param CommentRepository $commentRepository
      * @return Response
      * @Route("/", name="app_home")
      */
     public function homepage(
-        ArticleRepository $repository
+        ArticleRepository $repository,
+        CommentRepository $commentRepository
     ): Response {
         $articles = $repository->findLatestPublished();
 
+        $lastComments = $commentRepository->getLatest();
+
         return $this->render(
             'articles/home.html.twig',
-            ['articles' => $articles]
+            [
+                'articles' => $articles,
+                'comments' => $lastComments
+            ]
         );
     }
 
@@ -74,24 +82,15 @@ class ArticleController extends AbstractController
      */
     public function show(
         Article $article,
-        SlackClient $slackClient
+        SlackClient $slackClient,
     ): Response {
         if ($article->getSlug() === 'slack') {
             $slackClient->send('Hello World');
         }
 
-        $comments = [
-            'Why does the gull whine?',
-            'Cur galatae prarere?',
-            'Going to the next world doesn’t feel light anymore than emerging creates prime shame.'
-        ];
-
         return $this->render(
             'articles/show.html.twig',
-            [
-                'article' => $article,
-                'comments' => $comments
-            ]
+            ['article' => $article]
         );
     }
 }

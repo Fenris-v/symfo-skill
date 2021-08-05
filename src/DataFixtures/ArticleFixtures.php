@@ -3,7 +3,9 @@
 namespace App\DataFixtures;
 
 use App\Entity\Article;
+use App\Entity\Comment;
 use App\Homework\ArticleContentProvider;
+use App\Homework\CommentContentProvider;
 use Doctrine\Persistence\ObjectManager;
 
 class ArticleFixtures extends BaseFixtures
@@ -42,8 +44,10 @@ class ArticleFixtures extends BaseFixtures
         'слов',
     ];
 
-    public function __construct(private ArticleContentProvider $articleContent)
-    {
+    public function __construct(
+        private ArticleContentProvider $articleContent,
+        private CommentContentProvider $commentContent
+    ) {
     }
 
     public function loadData(ObjectManager $manager)
@@ -51,7 +55,7 @@ class ArticleFixtures extends BaseFixtures
         $this->createMany(
             Article::class,
             10,
-            function (Article $article) {
+            function (Article $article) use ($manager) {
                 $article
                     ->setKeywords(implode(', ', $this->faker->words(3)))
                     ->setDescription($this->faker->words(10, true))
@@ -63,6 +67,10 @@ class ArticleFixtures extends BaseFixtures
 
                 if ($this->faker->boolean(60)) {
                     $article->setPublishedAt($this->faker->dateTimeBetween('-100days', '-1 days'));
+                }
+
+                for ($i = 0; $i < $this->faker->numberBetween(2, 10); $i++) {
+                    $this->addComment($article, $manager);
                 }
             }
         );
@@ -78,5 +86,33 @@ class ArticleFixtures extends BaseFixtures
         }
 
         return $this->articleContent->get(rand(2, 10), $word, $repeat);
+    }
+
+    /**
+     * @param Article $article
+     * @param ObjectManager $manager
+     */
+    public function addComment(Article $article, ObjectManager $manager): void
+    {
+        $comment = (new Comment())
+            ->setAuthorName($this->faker->name)
+            ->setCreatedAt($this->faker->dateTimeBetween('-100 days', '-1 days'))
+            ->setArticle($article);
+
+        $word = null;
+        if ($this->faker->boolean(70)) {
+            $word = $this->faker->randomElement(self::$words);
+        }
+
+        $comment->setContent(
+            $this->commentContent
+                ->get($word, $this->faker->numberBetween(1, 5))
+        );
+
+        if ($this->faker->boolean()) {
+            $comment->setDeletedAt($this->faker->dateTimeThisMonth);
+        }
+
+        $manager->persist($comment);
     }
 }

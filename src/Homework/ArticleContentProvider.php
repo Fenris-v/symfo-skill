@@ -17,7 +17,7 @@ class ArticleContentProvider implements ArticleContentProviderInterface
     /**
      * ArticleContentProvider constructor.
      */
-    public function __construct(private bool $markAsBold)
+    public function __construct(private bool $markAsBold, private PasteWords $pasteWords)
     {
     }
 
@@ -42,7 +42,7 @@ class ArticleContentProvider implements ArticleContentProviderInterface
 
         $word = $this->wordMarkdown($word);
 
-        return $this->modifyText($result, $word, $wordsCount);
+        return $this->pasteWords->paste($result, $word, $wordsCount);
     }
 
     /**
@@ -78,36 +78,5 @@ class ArticleContentProvider implements ArticleContentProviderInterface
         }
 
         return implode(PHP_EOL . PHP_EOL, $result);
-    }
-
-    /**
-     * Добавляет указанное слово в случайное место текста в указанном количестве
-     * @param string $text - текст куда вшить
-     * @param string $word - слово, которое нужно вшить
-     * @param int $wordsCount - количество повторений слова
-     * @return string
-     * @throws GenerateException
-     */
-    private function modifyText(string $text, string $word, int $wordsCount): string
-    {
-        $text = explode(' ', $text);
-
-        $length = count($text) - 1;
-
-        if ($wordsCount >= $length) {
-            throw new GenerateException('Задано слишком много повторений слова');
-        }
-
-        for ($i = 0; $i < $wordsCount; $i++) {
-            $key = rand(1, $length);
-
-            while (stripos($text[$key], $word) === 0) {
-                $key = rand(1, $length);
-            }
-
-            $text[$key] = "$word $text[$key]";
-        }
-
-        return implode(' ', $text);
     }
 }

@@ -12,33 +12,16 @@
                             <h4 class="mb-0">Последние комменты</h4>
                         </div>
                         <div class="quotes-container bg-white shadow-sm border border-top-0 pb-2 pt-2 px-5">
+                            {% for comment in comments %}
                             <div class="border-bottom mb-3">
-                                <div class="h4 text-left"># Когда пролил кофе на клавиатуру</div>
+                                <div class="h4 text-left"># {{ comment.article.title }}</div>
                                 <p>
                                     <i class="far fa-comment text-secondary"></i>
-                                    "Очень жизненно, аж прослезился"<br> —
-                                    <a href="{{ path('app_home') }}">Василий ПиЭйчПи, Программист Ruby</a>
+                                    {{ comment.content | u.truncate(40, '...') }}<br> —
+                                    <a href="{{ path('app_home') }}">{{ comment.authorName }}, Верстак от бога</a>
                                 </p>
                             </div>
-
-                            <div class="border-bottom mb-3">
-                                <div class="h4 text-left"># Facebook ест твои данные</div>
-                                <p>
-                                    <i class="far fa-comment text-secondary"></i>
-                                    "Backend'еры плакали, кололись, но продолжали верстать сайт"<br> —
-                                    <a href="{{ path('app_home') }}">Флекс Абсолютович, Верстак от бога</a>
-                                </p>
-                            </div>
-
-
-                            <div>
-                                <div class="h4 text-left"># Что делать, если надо верстать?</div>
-                                <p>
-                                    <i class="far fa-comment text-secondary"></i>
-                                    "Ой, я сайт перепутал"<br> —
-                                    <a href="{{ path('app_home') }}">Барон Сосискин, Дегустатор сосисок</a>
-                                </p>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

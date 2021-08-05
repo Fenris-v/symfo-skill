@@ -62,7 +62,7 @@
     </div>
 
     <div class="col-sm-12 mb-4">
-        <h3><i class="pr-3 far fa-comment text-secondary"></i>3 Комментария</h3>
+        <h3><i class="pr-3 far fa-comment text-secondary"></i>{{ article.comments | length }} Комментария</h3>
         <hr>
 
         <div class="row mb-4">
@@ -76,49 +76,21 @@
             </div>
         </div>
 
+        {% for comment in article.comments %}
         <div class="row mt-2">
             <div class="col-sm-12">
                 <div class="media">
                     <img class="align-self-start comment-img rounded-circle"
                          src="{{ asset('/images/profile.png') }}">
                     <div class="media-body align-self-start col-sm-6">
-                        <b>Вью j эс</b>
-                        <small>11 дней назад</small>
+                        <b>{{ comment.authorName }}</b>
+                        <small>{{ comment.createdAt | ago }}</small>
                         <br>
-                        <span class="comment"> Adipisci quia dolores non vel vero suscipit. Et voluptates aut alias consequatur.</span>
+                        <span class="comment">{{ comment.content }}</span>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row mt-2">
-            <div class="col-sm-12">
-                <div class="media">
-                    <img class="align-self-start comment-img rounded-circle"
-                         src="{{ asset('/images/profile.png') }}">
-                    <div class="media-body align-self-start col-sm-6">
-                        <b>Фронтенд Фулстков</b>
-                        <small>11 дней назад</small>
-                        <br>
-                        <span class="comment">Nunquam transferre equiso. Amicitia, elevatus, et tumultumque. Cur extum tolerare? Ubi est rusticus domus?</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-2">
-            <div class="col-sm-12">
-                <div class="media">
-                    <img class="align-self-start comment-img rounded-circle"
-                         src="{{ asset('/images/profile.png') }}">
-                    <div class="media-body align-self-start col-sm-6">
-                        <b>Барон Сосискин</b>
-                        <small>11 дней назад</small>
-                        <br>
-                        <span class="comment">Yarr, ye jolly cannibal - set sails for death!</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 {% endblock %}
