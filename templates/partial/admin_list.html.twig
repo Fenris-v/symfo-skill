@@ -1,0 +1,90 @@
+<form>
+    <div class="input-group mb-3">
+        <input type="text"
+               name="q"
+               class="form-control"
+               placeholder="Найти..."
+               value="{{ app.request.query.get('q') }}">
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-outline-secondary"><i class="fa fa-search"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="perPage">Количество на странице</label>
+        <select id="perPage" class="form-control" name="perPage">
+            <option value="10" selected>10</option>
+            <option value="20" {{ app.request.query.get('perPage') == 20 ? 'selected' : '' }}>20</option>
+            <option value="50" {{ app.request.query.get('perPage') == 50 ? 'selected' : '' }}>50</option>
+        </select>
+    </div>
+
+    <div class="input-group mb-3">
+        <div class="form-check">
+            <input type="checkbox"
+                   name="showDeleted"
+                   id="showDeleted"
+                   class="form-check-input"
+                    {% if app.request.query.has('showDeleted') %} checked {% endif %}>
+            <label for="showDeleted" class="form-check-label">Показать удаленные</label>
+        </div>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Статья</th>
+        {% if comments is defined %}
+            <th>Автор</th>
+        {% endif %}
+        <th>Комментарий</th>
+        <th>Дата</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in pagination %}
+        <tr>
+            <td>
+                {% if comments is defined %}
+                    <a href="{{ path('app_article_show', { slug: item.article.slug }) }}">
+                        {{ item.article.title }}
+                    </a>
+                {% else %}
+                    {% for article in item.articles %}
+                        <a href="{{ path('app_article_show', { slug: article.slug }) }}">
+                            {{ article.title }}
+                        </a>
+                    {% endfor %}
+                {% endif %}
+            </td>
+            {% if comments is defined %}
+                <td>
+                    {{ item.authorName }}
+                </td>
+            {% endif %}
+            <td style="width: 20%;">
+                {% if comments is defined %}
+                    {{ item.content | u.truncate(40, '...') ?? item.name }}
+                {% else %}
+                    {{ item.name }}
+                {% endif %}
+            </td>
+            <td>
+                {{ item.createdAt | ago }}
+                {% if item.deleted %}
+                    DELETED
+                {% endif %}
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="4">
+                Нет комментариев
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{{ knp_pagination_render(pagination) }}

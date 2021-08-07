@@ -30,11 +30,13 @@
                         </div>
                     {% endif %}
                 </div>
-                <div class="mb-2 d-flex">
-                    <span class="badge badge-pill badge-secondary mr-2">Балбес</span>
-                    <span class="badge badge-pill badge-secondary mr-2">Криворучка</span>
-                    <span class="badge badge-pill badge-secondary mr-2">Рукопоп</span>
-                </div>
+
+                {% if article.tags | length %}
+                    <div class="mb-2 d-flex">
+                        {% include 'partial/article_tags.html.twig' with { tags: article.tags } %}
+                    </div>
+                {% endif %}
+
                 <div class="mb-2">
                     <div class="text-muted align-self-center article-detail-arrows">
                         <span data-item="likesCount"
@@ -77,20 +79,20 @@
         </div>
 
         {% for comment in article.comments %}
-        <div class="row mt-2">
-            <div class="col-sm-12">
-                <div class="media">
-                    <img class="align-self-start comment-img rounded-circle"
-                         src="{{ asset('/images/profile.png') }}">
-                    <div class="media-body align-self-start col-sm-6">
-                        <b>{{ comment.authorName }}</b>
-                        <small>{{ comment.createdAt | ago }}</small>
-                        <br>
-                        <span class="comment">{{ comment.content }}</span>
+            <div class="row mt-2">
+                <div class="col-sm-12">
+                    <div class="media">
+                        <img class="align-self-start comment-img rounded-circle"
+                             src="{{ asset('/images/profile.png') }}">
+                        <div class="media-body align-self-start col-sm-6">
+                            <b>{{ comment.authorName }}</b>
+                            <small>{{ comment.createdAt | ago }}</small>
+                            <br>
+                            <span class="comment">{{ comment.content }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         {% endfor %}
     </div>
 {% endblock %}

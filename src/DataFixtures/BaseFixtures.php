@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Exception;
 use Faker\Factory;
 use Faker\Generator;
 
@@ -11,6 +12,17 @@ abstract class BaseFixtures extends Fixture
 {
     protected Generator $faker;
     protected ObjectManager $manager;
+    private array $referencesIndex = [];
+
+    protected static $words = [
+        'это',
+        'массив',
+        'длиной',
+        'пять',
+        'дефис',
+        'десять',
+        'слов',
+    ];
 
     public function load(ObjectManager $manager)
     {
@@ -38,9 +50,36 @@ abstract class BaseFixtures extends Fixture
         callable $factory
     ) {
         for ($i = 0; $i < $count; $i++) {
-            $this->create($className, $factory);
+            $entity = $this->create($className, $factory);
+
+            $this->addReference("$className|$i", $entity);
+        }
+    }
+
+    /**
+     * @param string $className
+     * @return object
+     * @throws Exception
+     */
+    protected function getRandomReference(string $className): object
+    {
+        if (!isset($this->referencesIndex[$className])) {
+            $this->referencesIndex[$className] = [];
+            foreach ($this->referenceRepository->getReferences() as $key => $reference) {
+                if (str_starts_with($key, $className . '|')) {
+                    $this->referencesIndex[$className][] = $key;
+                }
+            }
         }
 
-        $this->manager->flush();
+        if (empty($this->referencesIndex[$className])) {
+            throw new Exception('Не найдены ссылки на класс: ' . $className);
+        }
+
+        return $this->getReference(
+            $this->faker->randomElement(
+                $this->referencesIndex[$className]
+            )
+        );
     }
 }

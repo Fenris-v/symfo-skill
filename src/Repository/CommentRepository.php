@@ -32,15 +32,15 @@ class CommentRepository extends ServiceEntityRepository
             ->addSelect('a')
             ->setMaxResults($limit)
             ->getQuery()
-            ->getScalarResult();
+            ->getResult();
     }
 
     /**
      * @param string|null $search
      * @param bool $withSoftDeletes
-     * @return int|mixed|string
+     * @return QueryBuilder
      */
-    public function findAllWithSearch(?string $search, bool $withSoftDeletes = false)
+    public function findAllWithSearchQuery(?string $search, bool $withSoftDeletes = false): QueryBuilder
     {
         $qb = $this->createQueryBuilder('c');
 
@@ -55,8 +55,6 @@ class CommentRepository extends ServiceEntityRepository
 
         return $qb->innerJoin('c.article', 'a')
             ->addSelect('a')
-            ->orderBy('c.createdAt', 'DESC')
-            ->getQuery()
-            ->getResult();
+            ->orderBy('c.createdAt', 'DESC');
     }
 }

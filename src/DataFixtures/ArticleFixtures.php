@@ -3,12 +3,12 @@
 namespace App\DataFixtures;
 
 use App\Entity\Article;
-use App\Entity\Comment;
+use App\Entity\Tag;
 use App\Homework\ArticleContentProvider;
-use App\Homework\CommentContentProvider;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class ArticleFixtures extends BaseFixtures
+class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
 {
     private static array $titles = [
         'Что делать, если надо верстать?',
@@ -34,20 +34,8 @@ class ArticleFixtures extends BaseFixtures
         '/images/article-3.jpg',
     ];
 
-    private static array $words = [
-        'это',
-        'массив',
-        'длиной',
-        'пять',
-        'дефис',
-        'десять',
-        'слов',
-    ];
-
-    public function __construct(
-        private ArticleContentProvider $articleContent,
-        private CommentContentProvider $commentContent
-    ) {
+    public function __construct(private ArticleContentProvider $articleContent)
+    {
     }
 
     public function loadData(ObjectManager $manager)
@@ -69,11 +57,18 @@ class ArticleFixtures extends BaseFixtures
                     $article->setPublishedAt($this->faker->dateTimeBetween('-100days', '-1 days'));
                 }
 
-                for ($i = 0; $i < $this->faker->numberBetween(2, 10); $i++) {
-                    $this->addComment($article, $manager);
+                $tags = [];
+                for ($i = 0; $i < $this->faker->numberBetween(0, 5); $i++) {
+                    $tags[] = $this->getRandomReference(Tag::class);
+                }
+
+                foreach ($tags as $tag) {
+                    $article->addTag($tag);
                 }
             }
         );
+
+        $this->manager->flush();
     }
 
     private function generateArticleText(): string
@@ -89,30 +84,12 @@ class ArticleFixtures extends BaseFixtures
     }
 
     /**
-     * @param Article $article
-     * @param ObjectManager $manager
+     * @return string[]
      */
-    public function addComment(Article $article, ObjectManager $manager): void
+    public function getDependencies(): array
     {
-        $comment = (new Comment())
-            ->setAuthorName($this->faker->name)
-            ->setCreatedAt($this->faker->dateTimeBetween('-100 days', '-1 days'))
-            ->setArticle($article);
-
-        $word = null;
-        if ($this->faker->boolean(70)) {
-            $word = $this->faker->randomElement(self::$words);
-        }
-
-        $comment->setContent(
-            $this->commentContent
-                ->get($word, $this->faker->numberBetween(1, 5))
-        );
-
-        if ($this->faker->boolean()) {
-            $comment->setDeletedAt($this->faker->dateTimeThisMonth);
-        }
-
-        $manager->persist($comment);
+        return [
+            TagFixtures::class
+        ];
     }
 }
