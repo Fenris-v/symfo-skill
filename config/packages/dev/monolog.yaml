@@ -22,3 +22,8 @@ monolog:
             path: "%kernel.logs_dir%/markdown.log"
             level: debug
             channels: [ "markdown" ]
+        security:
+            type: stream
+            path: "%kernel.logs_dir%/api.log"
+            level: debug
+            channels: [ "security" ]

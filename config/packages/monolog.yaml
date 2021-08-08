@@ -1,2 +1,8 @@
 monolog:
-    channels: ['markdown']
+    channels: ['markdown', 'security']
+#    handlers:
+#        security:
+#            level: debug
+#            type: stream
+#            channels: ['api']
+#            path: '%env(API_LOG)%'

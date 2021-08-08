@@ -1,0 +1,15 @@
+{% extends 'base_content.html.twig' %}
+
+{% block title %}Админ панель{% endblock %}
+
+{% block content %}
+    <h1>Админ панель</h1>
+    <ol>
+        <li>
+            <a href="{{ path('app_admin_comments') }}">Комментарии</a>
+        </li>
+        <li>
+            <a href="{{ path('app_admin_tags') }}">Теги</a>
+        </li>
+    </ol>
+{% endblock %}

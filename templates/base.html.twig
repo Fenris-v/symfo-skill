@@ -10,9 +10,16 @@
     {% endblock %}
 
     <title>{% block title %}Spill-Coffee-On-The-Keyboard{% endblock %}</title>
-    <meta name="keywords" content="{% block keywords %}{% endblock %}" />
+    <meta name="keywords" content="{% block keywords %}{% endblock %}"/>
 </head>
 <body>
+{% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+    <div class="alert alert-warning">
+        Имперсонализация включена.&nbsp;
+        <a href="{{ path('app_home', {'_switch_user': '_exit'}) }}">Выйти</a>
+    </div>
+{% endif %}
+
 {% include "base/header.html.twig" %}
 
 {% block body %}{% endblock %}

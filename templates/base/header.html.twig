@@ -1,7 +1,8 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container py-2">
 
-        <a class="navbar-brand" href="{{ path('app_home') }}"><i class="fas fa-coffee text-muted"></i> Spill-Coffee-On-The-Keyboard <i
+        <a class="navbar-brand" href="{{ path('app_home') }}"><i class="fas fa-coffee text-muted"></i>
+            Spill-Coffee-On-The-Keyboard <i
                     class="fas fa-keyboard text-muted"></i></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -15,23 +16,29 @@
                 </li>
             </ul>
             <ul class="navbar-nav my-2 my-lg-0">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="{{ path('app_home') }}" id="navbarDropdown" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="nav-profile-img rounded-circle" src="{{ asset('/images/profile.png') }}">
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/profile.html">Профиль</a>
-                        <a class="dropdown-item" href="/create.html">Создать статью</a>
-                        <a class="dropdown-item" href="/admin.html">Админ</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ path('app_logout') }}">Выйти</a>
-                    </div>
-                </li>
-                <li class="nav-item d-flex my-auto">
-                    <a class="btn btn-outline-light my-2 my-sm-0 mr-2" href="{{  path('app_login') }}">Войти</a>
-                    <a class="btn btn-outline-light my-2 my-sm-0" href="/register.html">Регистрация</a>
-                </li>
+                {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="{{ path('app_home') }}" id="navbarDropdown"
+                           role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="nav-profile-img rounded-circle" src="{{ app.user.avatarUrl(40) }}">
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ path('app_account') }}">Профиль</a>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <a class="dropdown-item" href="/create.html">Создать статью</a>
+                                <a class="dropdown-item" href="{{ path('app_admin') }}">Админ</a>
+                            {% endif %}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{ path('app_logout') }}">Выйти</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item d-flex my-auto">
+                        <a class="btn btn-outline-light my-2 my-sm-0 mr-2" href="{{ path('app_login') }}">Войти</a>
+                        <a class="btn btn-outline-light my-2 my-sm-0" href="/register.html">Регистрация</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>

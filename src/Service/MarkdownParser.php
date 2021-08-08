@@ -5,6 +5,7 @@ namespace App\Service;
 use Demontpx\ParsedownBundle\Parsedown;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Security\Core\Security;
 
 class MarkdownParser
 {
@@ -15,14 +16,17 @@ class MarkdownParser
         private AdapterInterface $cache,
         private Parsedown $parsedown,
         private LoggerInterface $markdownLogger,
-        private bool $debug
+        private bool $debug,
+        private Security $security
     ) {
     }
 
     public function parse(string $source): string
     {
-        if (stripos($source, 'кофе') !== false) {
-            $this->markdownLogger->info('Has');
+        if (stripos($source, 'длиной') !== false) {
+            $this->markdownLogger->info('Has', [
+                'user' => $this->security->getUser(),
+            ]);
         }
 
         if ($this->debug) {
