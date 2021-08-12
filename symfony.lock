@@ -112,6 +112,9 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
+    "fzaninotto/faker": {
+        "version": "v1.5.0"
+    },
     "gedmo/doctrine-extensions": {
         "version": "v3.1.0"
     },
@@ -188,6 +191,15 @@
         "version": "1.1.0"
     },
     "php-http/stopwatch-plugin": {
+        "version": "1.4.0"
+    },
+    "phpdocumentor/reflection-common": {
+        "version": "2.2.0"
+    },
+    "phpdocumentor/reflection-docblock": {
+        "version": "5.2.2"
+    },
+    "phpdocumentor/type-resolver": {
         "version": "1.4.0"
     },
     "psr/cache": {
@@ -453,6 +465,12 @@
     "symfony/security-http": {
         "version": "v5.3.6"
     },
+    "symfony/serializer": {
+        "version": "v5.3.4"
+    },
+    "symfony/serializer-pack": {
+        "version": "v1.0.4"
+    },
     "symfony/service-contracts": {
         "version": "v2.4.0"
     },
@@ -563,5 +581,8 @@
     },
     "twig/twig": {
         "version": "v3.3.2"
+    },
+    "webmozart/assert": {
+        "version": "1.10.0"
     }
 }

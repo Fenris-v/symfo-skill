@@ -23,7 +23,9 @@ security:
                 login_path: app_login
             logout:
                 path: app_logout
-            custom_authenticator: App\Security\LoginFormAuthenticator
+            custom_authenticator:
+                - App\Security\ApiTokenAuthenticateAuthenticator
+                - App\Security\LoginFormAuthenticator
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: '%env(int:REMEMBER_LIFETIME)%'
