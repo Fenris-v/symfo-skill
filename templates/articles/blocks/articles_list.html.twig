@@ -13,8 +13,8 @@
                     <div class="d-flex mb-2">
                         <div class="text-muted align-self-center">
                             <img class="article-author-img rounded-circle"
-                                 src="https://robohash.org/хэтээмэль_цеэсесович.png?set=set3">
-                            {{ article.author }}
+                                 src="{{ article.author.avatarUrl(40) }}">
+                            {{ article.author.firstName }}
                         </div>
                         <div class="text-muted align-self-center ml-3">
                             <i class="fas fa-clock size-is-"></i>

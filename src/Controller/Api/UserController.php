@@ -17,15 +17,19 @@ use Symfony\Component\Security\Core\Security;
 class UserController extends AbstractController
 {
     /**
+     * @param Request $request
+     * @param Security $security
+     * @param LoggerInterface $apiLogger
+     * @return Response
      * @Route("/api/v1/user/", name="api_user")]
      */
     public function index(
         Request $request,
         Security $security,
-        LoggerInterface $logger
+        LoggerInterface $apiLogger
     ): Response {
         if (!$this->isGranted('ROLE_API')) {
-            return (new ApiLogger($logger))->log($security, $request);
+            return (new ApiLogger($apiLogger))->log($security, $request);
         }
 
         return $this->json($this->getUser(), context: ['groups' => 'main']);

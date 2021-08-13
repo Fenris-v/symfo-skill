@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Article;
 use App\Entity\Tag;
+use App\Entity\User;
 use App\Homework\ArticleContentProvider;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -18,14 +19,6 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
         'Когда в машинах поставят лоток?',
         'В погоне за красной точкой',
         'В чем смысл жизни сосисок',
-    ];
-
-    private static array $authors = [
-        'Николай',
-        'Mr White',
-        'Барон Сосискин',
-        'Сметанка',
-        'Рыжик',
     ];
 
     private static array $images = [
@@ -49,7 +42,7 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
                     ->setDescription($this->faker->words(10, true))
                     ->setImageFilename($this->faker->randomElement(self::$images))
                     ->setVoteCount($this->faker->numberBetween(-20, 20))
-                    ->setAuthor($this->faker->randomElement(self::$authors))
+                    ->setAuthor($this->getRandomReference(User::class))
                     ->setTitle($this->faker->randomElement(self::$titles))
                     ->setBody($this->generateArticleText());
 
@@ -89,7 +82,8 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
     public function getDependencies(): array
     {
         return [
-            TagFixtures::class
+            TagFixtures::class,
+            UserFixtures::class
         ];
     }
 }

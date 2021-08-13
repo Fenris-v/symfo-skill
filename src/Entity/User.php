@@ -55,9 +55,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $apiTokens;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Article::class, mappedBy="author")
+     */
+    private $articles;
+
     public function __construct()
     {
         $this->apiTokens = new ArrayCollection();
+        $this->articles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -195,22 +201,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->apiTokens;
     }
 
-    public function addApiToken(ApiToken $apiToken): self
+    /**
+     * @return Collection|Article[]
+     */
+    public function getArticles(): Collection
     {
-        if (!$this->apiTokens->contains($apiToken)) {
-            $this->apiTokens[] = $apiToken;
-            $apiToken->setUser($this);
+        return $this->articles;
+    }
+
+    public function addArticle(Article $article): self
+    {
+        if (!$this->articles->contains($article)) {
+            $this->articles[] = $article;
+            $article->setAuthor($this);
         }
 
         return $this;
     }
 
-    public function removeApiToken(ApiToken $apiToken): self
+    public function removeArticle(Article $article): self
     {
-        if ($this->apiTokens->removeElement($apiToken)) {
+        if ($this->articles->removeElement($article)) {
             // set the owning side to null (unless already changed)
-            if ($apiToken->getUser() === $this) {
-                $apiToken->setUser(null);
+            if ($article->getAuthor() === $this) {
+                $article->setAuthor(null);
             }
         }
 
