@@ -1,0 +1,40 @@
+{% extends 'base_content.html.twig' %}
+
+{% block title %}Управление статьями{% endblock %}
+
+{% block content %}
+    <div class="admin-header-with-button">
+        <h1>Управление Статьями</h1>
+        <div>
+            <a class="btn btn-primary"
+               href="{{ path('app_admin_article_create') }}">Создать новую статью</a>
+        </div>
+    </div>
+
+    {% include('partial/search_form.html.twig') with { hideCheckbox: true } %}
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Статья</th>
+            <th>Описание</th>
+            <th>Автор</th>
+            <th>Опубликована</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for article in pagination %}
+            <tr>
+                <td>
+                    <a href="{{ path('app_admin_article_edit', { id: article.id }) }}">{{ article.title }}</a>
+                </td>
+                <td>{{ article.description }}</td>
+                <td>{{ article.author.firstName }}</td>
+                <td>
+                    <i class="fas fa-{{ article.isPublished ? 'check text-primary' : 'times text-warning' }}"></i>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

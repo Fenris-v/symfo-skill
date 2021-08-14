@@ -22,6 +22,20 @@
 
 {% include "base/header.html.twig" %}
 
+{% if app.session.flashBag.peek('flash_message') | length > 0 %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-success" role="alert">
+                {% for message in app.flashes('flash_message') %}
+                    <p class="mb-0">{{ message }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% block body %}{% endblock %}
 
 {% include "base/footer.html.twig" %}

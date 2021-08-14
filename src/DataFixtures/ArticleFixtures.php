@@ -35,7 +35,7 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
     {
         $this->createMany(
             Article::class,
-            10,
+            25,
             function (Article $article) use ($manager) {
                 $article
                     ->setKeywords(implode(', ', $this->faker->words(3)))

@@ -40,7 +40,9 @@ class ArticleController extends AbstractController
         );
     }
 
-    #[Route('/articles/article_content/', name: 'app_article_content')]
+    /**
+     * @Route("/articles/article_content/", name="app_article_content")
+     */
     public function articleGenerate(
         Request $request,
         ArticleContentProviderInterface $articleContent
@@ -80,10 +82,8 @@ class ArticleController extends AbstractController
      * @throws SlackApiException
      * @Route("/articles/{slug}/", name="app_article_show")
      */
-    public function show(
-        Article $article,
-        SlackClient $slackClient,
-    ): Response {
+    public function show(Article $article, SlackClient $slackClient): Response
+    {
         if ($article->getSlug() === 'slack') {
             $slackClient->send('Hello World');
         }

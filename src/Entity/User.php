@@ -194,7 +194,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|ApiToken[]
+     * @return Collection
      */
     public function getApiTokens(): Collection
     {
@@ -202,7 +202,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection|Article[]
+     * @return Collection
      */
     public function getArticles(): Collection
     {

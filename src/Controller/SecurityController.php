@@ -46,9 +46,9 @@ class SecurityController extends AbstractController
      */
     public function register(
         Request $request,
-        UserPasswordHasherInterface $passwordHasher,
+        UserPasswordHasherInterface $userPasswordHasher,
         UserAuthenticatorInterface $userAuthenticator,
-        LoginFormAuthenticator $authenticator
+        LoginFormAuthenticator $loginFormAuthenticator
     ) {
         if (
             $request->isMethod('POST') &&
@@ -62,7 +62,7 @@ class SecurityController extends AbstractController
             $user->setEmail($request->request->get('email'))
                 ->setFirstName($request->request->get('firstName'))
                 ->setPassword(
-                    $passwordHasher->hashPassword(
+                    $userPasswordHasher->hashPassword(
                         $user,
                         $request->request->get('password')
                     )
@@ -74,7 +74,7 @@ class SecurityController extends AbstractController
 
             return $userAuthenticator->authenticateUser(
                 $user,
-                $authenticator,
+                $loginFormAuthenticator,
                 $request
             );
         }

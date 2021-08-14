@@ -32,6 +32,28 @@ class ArticleRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param string|null $search
+     * @param bool $withSoftDeletes
+     * @return QueryBuilder
+     */
+    public function findAllWithSearchQuery(?string $search, bool $withSoftDeletes = false): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('a');
+
+        if ($search) {
+            $qb->andWhere('a.title LIKE :search OR a.description LIKE :search OR a.body LIKE :search OR u.firstName LIKE :search')
+                ->setParameter('search', "%$search%");
+        }
+
+        if ($withSoftDeletes) {
+            $this->getEntityManager()->getFilters()->disable('softdeleteable');
+        }
+
+        $qb->innerJoin('a.author', 'u')->addSelect('u');
+        return $this->latest($qb);
+    }
+
+    /**
      * @return Article[] Returns an array of Article objects
      */
     public function findLatestPublished(): array
@@ -43,6 +65,16 @@ class ArticleRepository extends ServiceEntityRepository
             ->addSelect('t')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param QueryBuilder|null $qb
+     * @return QueryBuilder
+     */
+    public function latest(?QueryBuilder $qb = null): QueryBuilder
+    {
+        return $this->getOrCreateQueryBuilder($qb)
+            ->orderBy('a.publishedAt', 'DESC');
     }
 
     /**
@@ -62,15 +94,5 @@ class ArticleRepository extends ServiceEntityRepository
     private function getOrCreateQueryBuilder(?QueryBuilder $qb = null): QueryBuilder
     {
         return $qb ?? $this->createQueryBuilder('a');
-    }
-
-    /**
-     * @param QueryBuilder|null $qb
-     * @return QueryBuilder
-     */
-    private function latest(?QueryBuilder $qb = null): QueryBuilder
-    {
-        return $this->getOrCreateQueryBuilder($qb)
-            ->orderBy('a.publishedAt', 'DESC');
     }
 }

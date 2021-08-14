@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -279,5 +280,10 @@ class Article
         $this->author = $author;
 
         return $this;
+    }
+
+    public function isPublished(): bool
+    {
+        return null !== $this->getPublishedAt();
     }
 }
