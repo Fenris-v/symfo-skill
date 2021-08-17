@@ -63,5 +63,14 @@ body {
     align-items: center;
 }
 
+
+.user-register .form-group {
+    margin-bottom: 0;
+}
+
+.user-register .form-check {
+    margin: 1rem 0;
+}
+
 @import "./detail.css";
 @import "./signin.css";

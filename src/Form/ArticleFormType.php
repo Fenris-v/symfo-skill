@@ -11,6 +11,8 @@ use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ArticleFormType extends AbstractType
 {
@@ -24,14 +26,35 @@ class ArticleFormType extends AbstractType
             ->add('title', null, [
                 'label' => 'Название статьи',
                 'help' => 'Укажите название статьи',
+                'constraints' => [
+                    new Length(
+                        [
+                            'min' => 3,
+                            'minMessage' => 'Минимальная длина 3 символа'
+                        ]
+                    ),
+                    new NotBlank(['message' => 'Поле не может быть пустым'])
+                ]
             ])
             ->add('description', TextareaType::class, [
                 'label' => 'Описание статьи',
-                'attr' => ['rows' => 3]
+                'attr' => ['rows' => 3],
+                'constraints' => [
+                    new Length(
+                        [
+                            'max' => 100,
+                            'maxMessage' => 'Максимальная длина 100 символов'
+                        ]
+                    ),
+                    new NotBlank(['message' => 'Поле не может быть пустым'])
+                ]
             ])
             ->add('body', null, [
                 'label' => 'Содержимое статьи',
-                'attr' => ['rows' => 10]
+                'attr' => ['rows' => 10],
+                'constraints' => [
+                    new NotBlank(['message' => 'Поле не может быть пустым'])
+                ]
             ])
             ->add('publishedAt', null, [
                 'label' => 'Дата публикации статьи',
@@ -47,7 +70,11 @@ class ArticleFormType extends AbstractType
                     return sprintf('%s (id: %d)', $user->getFirstName(), $user->getId());
                 },
                 'placeholder' => 'Выберите автора статьи',
-                'choices' => $this->userRepository->findAllSortedByName()
+                'choices' => $this->userRepository->findAllSortedByName(),
+                'invalid_message' => 'Такой автор не существует',
+                'constraints' => [
+                    new NotBlank(['message' => 'Поле не может быть пустым'])
+                ]
             ]);
 
         $formBuilder->get('body')

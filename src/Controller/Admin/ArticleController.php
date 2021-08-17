@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -58,37 +59,79 @@ class ArticleController extends AbstractController
     ): Response {
         $form = $this->createForm(ArticleFormType::class);
 
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var Article $article */
-            $article = $form->getData();
-            $article->setBody($articleWordsFilter->filter(
-                $article->getBody(),
-                ['стакан', 'слов', 'нескол', 'прост']
-            ));
-
-            $em->persist($article);
-            $em->flush();
-
+        if ($this->handlerFormRequest($form, $request, $em, $articleWordsFilter)) {
             $this->addFlash('flash_message', 'Статья успешно создана');
 
             return $this->redirectToRoute('app_admin_articles');
         }
 
         return $this->render('admin/article/create.html.twig', [
-            'articleForm' => $form->createView()
+            'articleForm' => $form->createView(),
+            'showError' => $form->isSubmitted()
         ]);
     }
 
     /**
      * @param Article $article
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     * @param ArticleWordsFilter $articleWordsFilter
      * @return Response
      * @Route("/admin/articles/{id}/edit/", name="app_admin_article_edit")
      * @IsGranted("MANAGE", subject="article")
      */
-    public function edit(Article $article): Response
-    {
-        return new Response('Страница редактирования статьи: ' . $article->getTitle());
+    public function edit(
+        Article $article,
+        Request $request,
+        EntityManagerInterface $em,
+        ArticleWordsFilter $articleWordsFilter
+    ): Response {
+        $form = $this->createForm(ArticleFormType::class, $article);
+
+        if ($article = $this->handlerFormRequest($form, $request, $em, $articleWordsFilter)) {
+            $this->addFlash('flash_message', 'Статья успешно изменена');
+
+            return $this->redirectToRoute('app_admin_article_edit', ['id' => $article->getId()]);
+        }
+
+        return $this->render('admin/article/edit.html.twig', [
+            'articleForm' => $form->createView(),
+            'showError' => $form->isSubmitted()
+        ]);
+    }
+
+    /**
+     * Сохранение статьи
+     * @param FormInterface $form
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     * @param ArticleWordsFilter $articleWordsFilter
+     * @return Article|null
+     */
+    private function handlerFormRequest(
+        FormInterface $form,
+        Request $request,
+        EntityManagerInterface $em,
+        ArticleWordsFilter $articleWordsFilter
+    ): ?Article {
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Article $article */
+            $article = $form->getData();
+            $article->setBody(
+                $articleWordsFilter->filter(
+                    $article->getBody(),
+                    ['стакан', 'слов', 'нескол', 'прост']
+                )
+            );
+
+            $em->persist($article);
+            $em->flush();
+
+            return $article;
+        }
+
+        return null;
     }
 }

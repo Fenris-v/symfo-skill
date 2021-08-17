@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\UserRegistrationFormType;
 use App\Security\LoginFormAuthenticator;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,27 +50,22 @@ class SecurityController extends AbstractController
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
         UserAuthenticatorInterface $userAuthenticator,
-        LoginFormAuthenticator $loginFormAuthenticator
-    ) {
-        if (
-            $request->isMethod('POST') &&
-            $request->request->get('email') &&
-            $request->request->get('firstName') &&
-            $request->request->get('password') &&
-            $request->request->get('agree')
-        ) {
-            $user = new User();
+        LoginFormAuthenticator $loginFormAuthenticator,
+        EntityManagerInterface $em
+    ): ?Response {
+        $form = $this->createForm(UserRegistrationFormType::class);
+        $form->handleRequest($request);
 
-            $user->setEmail($request->request->get('email'))
-                ->setFirstName($request->request->get('firstName'))
-                ->setPassword(
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $form->getData();
+
+            $user->setPassword(
                     $userPasswordHasher->hashPassword(
                         $user,
-                        $request->request->get('password')
+                        $form->get('plainPassword')->getData()
                     )
                 );
 
-            $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
 
@@ -80,7 +77,7 @@ class SecurityController extends AbstractController
         }
 
         return $this->render('security/register.html.twig', [
-            'error' => ''
+            'registrationForm' => $form->createView(),
         ]);
     }
 }
