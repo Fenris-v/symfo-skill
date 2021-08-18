@@ -1,0 +1,21 @@
+{% block custom_email_row %}
+    <label for="user_registration_form_email" class="required">
+        <span class="invalid-feedback d-block">
+            {% for error in errors %}
+                <span class="d-block">
+                    <span class="form-error-icon badge badge-danger text-uppercase">Ошибка</span>
+                    <span class="form-error-message">{{ error.message }}</span>
+                </span>
+            {% endfor %}
+        </span>
+    </label>
+
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <div class="input-group-text">{{ symbol }}</div>
+        </div>
+        <input type="email" class="form-control" name="{{ full_name }}"
+               id="{{ attr['id'] ?? '' }}" placeholder="{{ attr['placeholder'] }}"
+               value="{{ value }}" {{ required ? 'required' : '' }}>
+    </div>
+{% endblock %}

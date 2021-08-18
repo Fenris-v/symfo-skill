@@ -86,7 +86,9 @@ class ArticleController extends AbstractController
         EntityManagerInterface $em,
         ArticleWordsFilter $articleWordsFilter
     ): Response {
-        $form = $this->createForm(ArticleFormType::class, $article);
+        $form = $this->createForm(ArticleFormType::class, $article, [
+            'enable_published_at' => true
+        ]);
 
         if ($article = $this->handlerFormRequest($form, $request, $em, $articleWordsFilter)) {
             $this->addFlash('flash_message', 'Статья успешно изменена');
