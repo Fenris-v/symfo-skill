@@ -8,6 +8,10 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class RegistrationSpamValidator extends ConstraintValidator
 {
+    public function __construct(private RegistrationSpamFilter $registrationSpamFilter)
+    {
+    }
+
     public function validate($value, Constraint $constraint)
     {
         /* @var $constraint RegistrationSpam */
@@ -17,7 +21,7 @@ class RegistrationSpamValidator extends ConstraintValidator
         }
 
 
-        if ((new RegistrationSpamFilter())->filter($value)) {
+        if ($this->registrationSpamFilter->filter($value)) {
             $this->context->buildViolation($constraint->message)
                 ->addViolation();
         }

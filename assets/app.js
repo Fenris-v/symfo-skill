@@ -4,3 +4,4 @@ import './styles/app.css';
 import $ from 'jquery';
 import 'bootstrap'
 import './js/scripts'
+import './js/bootstrap_file_fields'
