@@ -7,10 +7,14 @@ use App\Entity\User;
 use App\Form\ArticleFormType;
 use App\Homework\ArticleWordsFilter;
 use App\Repository\ArticleRepository;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use League\Flysystem\FilesystemException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -47,6 +51,7 @@ class ArticleController extends AbstractController
      * @param EntityManagerInterface $em
      * @param Request $request
      * @param ArticleWordsFilter $articleWordsFilter
+     * @param FileUploader $articleFileUploader
      * @return Response
      * @Route("/admin/articles/create/", name="app_admin_article_create")
      * @IsGranted("ROLE_ADMIN_ARTICLE")
@@ -54,41 +59,98 @@ class ArticleController extends AbstractController
     public function create(
         EntityManagerInterface $em,
         Request $request,
-        ArticleWordsFilter $articleWordsFilter
+        ArticleWordsFilter $articleWordsFilter,
+        FileUploader $articleFileUploader
     ): Response {
-        $form = $this->createForm(ArticleFormType::class);
+        $form = $this->createForm(ArticleFormType::class, new Article());
 
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            /** @var Article $article */
-            $article = $form->getData();
-            $article->setBody($articleWordsFilter->filter(
-                $article->getBody(),
-                ['стакан', 'слов', 'нескол', 'прост']
-            ));
-
-            $em->persist($article);
-            $em->flush();
-
+        if ($this->handlerFormRequest($form, $request, $em, $articleWordsFilter, $articleFileUploader)) {
             $this->addFlash('flash_message', 'Статья успешно создана');
 
             return $this->redirectToRoute('app_admin_articles');
         }
 
         return $this->render('admin/article/create.html.twig', [
-            'articleForm' => $form->createView()
+            'articleForm' => $form->createView(),
+            'showError' => $form->isSubmitted()
         ]);
     }
 
     /**
      * @param Article $article
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     * @param ArticleWordsFilter $articleWordsFilter
+     * @param FileUploader $articleFileUploader
      * @return Response
      * @Route("/admin/articles/{id}/edit/", name="app_admin_article_edit")
      * @IsGranted("MANAGE", subject="article")
      */
-    public function edit(Article $article): Response
-    {
-        return new Response('Страница редактирования статьи: ' . $article->getTitle());
+    public function edit(
+        Article $article,
+        Request $request,
+        EntityManagerInterface $em,
+        ArticleWordsFilter $articleWordsFilter,
+        FileUploader $articleFileUploader
+    ): Response {
+        $form = $this->createForm(ArticleFormType::class, $article, [
+            'enable_published_at' => true
+        ]);
+
+        if ($article = $this->handlerFormRequest($form, $request, $em, $articleWordsFilter, $articleFileUploader)) {
+            $this->addFlash('flash_message', 'Статья успешно изменена');
+
+            return $this->redirectToRoute('app_admin_article_edit', ['id' => $article->getId()]);
+        }
+
+        return $this->render('admin/article/edit.html.twig', [
+            'articleForm' => $form->createView(),
+            'showError' => $form->isSubmitted()
+        ]);
+    }
+
+    /**
+     * Сохранение статьи
+     * @param FormInterface $form
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     * @param ArticleWordsFilter $articleWordsFilter
+     * @param FileUploader $articleFileUploader
+     * @return Article|null
+     * @throws FilesystemException
+     */
+    private function handlerFormRequest(
+        FormInterface $form,
+        Request $request,
+        EntityManagerInterface $em,
+        ArticleWordsFilter $articleWordsFilter,
+        FileUploader $articleFileUploader
+    ): ?Article {
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var Article $article */
+            $article = $form->getData();
+            $article->setBody(
+                $articleWordsFilter->filter(
+                    $article->getBody(),
+                    ['стакан', 'слов', 'нескол', 'прост']
+                )
+            );
+
+            /** @var UploadedFile|null $image */
+            $image = $form->get('image')->getData();
+
+            if ($image) {
+                $article->setImageFilename($articleFileUploader->uploadFile($image, $article->getImageFilename()));
+            }
+
+            $em->persist($article);
+            $em->flush();
+
+            return $article;
+        }
+
+        return null;
     }
 }

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Создание статьи{% endblock %}
+{% block title %}Изменение статьи{% endblock %}
 
 {% block body %}
     <div class="container">
@@ -8,12 +8,12 @@
             {% if showError %}
                 <div class="col-12">
                     <div class="alert alert-danger" role="alert">
-                        Не удалось создать статью
+                        Не удалось изменить статью
                     </div>
                 </div>
             {% endif %}
 
-            {% include 'admin/article/form.html.twig' with { btn_text: 'Создать' } %}
+            {% include 'admin/article/form.html.twig' with { btn_text: 'Изменить' } %}
         </div>
     </div>
 {% endblock %}

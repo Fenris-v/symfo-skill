@@ -6,8 +6,11 @@ use App\Entity\Article;
 use App\Entity\Tag;
 use App\Entity\User;
 use App\Homework\ArticleContentProvider;
+use App\Service\FileUploader;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\File;
 
 class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
 {
@@ -22,13 +25,15 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
     ];
 
     private static array $images = [
-        '/images/article-1.jpeg',
-        '/images/article-2.jpeg',
-        '/images/article-3.jpg',
+        'article-1.jpeg',
+        'article-2.jpeg',
+        'article-3.jpg',
     ];
 
-    public function __construct(private ArticleContentProvider $articleContent)
-    {
+    public function __construct(
+        private ArticleContentProvider $articleContent,
+        private FileUploader $articleFileUploader
+    ) {
     }
 
     public function loadData(ObjectManager $manager)
@@ -37,6 +42,8 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
             Article::class,
             25,
             function (Article $article) use ($manager) {
+                $fileName = $this->faker->randomElement(self::$images);
+
                 $article
                     ->setKeywords(implode(', ', $this->faker->words(3)))
                     ->setDescription($this->faker->words(10, true))
@@ -44,7 +51,11 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
                     ->setVoteCount($this->faker->numberBetween(-20, 20))
                     ->setAuthor($this->getRandomReference(User::class))
                     ->setTitle($this->faker->randomElement(self::$titles))
-                    ->setBody($this->generateArticleText());
+                    ->setBody($this->generateArticleText())
+                    ->setImageFilename(
+                        $this->articleFileUploader
+                            ->uploadFile(new File(dirname(__DIR__, 2) . '/public/images/' . $fileName))
+                    );
 
                 if ($this->faker->boolean(60)) {
                     $article->setPublishedAt($this->faker->dateTimeBetween('-100days', '-1 days'));

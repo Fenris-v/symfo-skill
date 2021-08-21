@@ -4,7 +4,7 @@
             <div class="row no-gutters border flex-md-row p-3 mb-4 shadow-sm">
                 {% if article.imageFilename %}
                     <div class="col-auto d-block">
-                        <img class="article-img" src="{{ asset(article.imageFilename) }}">
+                        <img class="article-img" src="{{ article.imageFilename | imagine_filter('articles_preview') }}">
                     </div>
                 {% endif %}
                 <a class="col px-4 d-flex flex-column article-item"

@@ -10,8 +10,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use phpDocumentor\Reflection\Types\This;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
@@ -37,8 +38,25 @@ class Article
      * @Gedmo\Slug(fields={"title"})
      * @ORM\Column(type="string", length=100, unique=true)
      * @Groups("main")
+     * @Assert\DisableAutoMapping()
      */
     private $slug;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     * @Assert\DisableAutoMapping()
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTime
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(type="datetime")
+     * @Assert\DisableAutoMapping()
+     */
+    protected $updatedAt;
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -285,5 +303,19 @@ class Article
     public function isPublished(): bool
     {
         return null !== $this->getPublishedAt();
+    }
+
+    /**
+     * @param ExecutionContextInterface $executionContext
+     * @param $payload
+     * @Assert\Callback()
+     */
+    public function validate(ExecutionContextInterface $executionContext, $payload)
+    {
+        if (preg_match('/\d/', $this->getTitle())) {
+            $executionContext->buildViolation('Нельзя создать статью с цифрами в названии')
+                ->atPath('title')
+                ->addViolation();
+        }
     }
 }
