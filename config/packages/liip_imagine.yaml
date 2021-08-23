@@ -3,6 +3,13 @@ liip_imagine:
     # valid drivers options include "gd" or "gmagick" or "imagick"
     driver: "gd"
 
+    loaders:
+        articles_flysystem_loader:
+            flysystem:
+                filesystem_service: oneup_flysystem.uploads_articles_filesystem
+
+    data_loader: articles_flysystem_loader
+
     resolvers:
         flysystem_resolver:
             flysystem:
@@ -13,15 +20,7 @@ liip_imagine:
 
     cache: flysystem_resolver
 
-    loaders:
-        articles_flysystem_loader:
-            flysystem:
-                filesystem_service: oneup_flysystem.uploads_articles_filesystem
-
-    data_loader: articles_flysystem_loader
-
     filter_sets:
-        cache: ~
         articles_preview:
             quality: 75
             filters:

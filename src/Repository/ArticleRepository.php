@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Article;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 
 /**
  * @method Article|null find($id, $lockMode = null, $lockVersion = null)
@@ -75,6 +77,54 @@ class ArticleRepository extends ServiceEntityRepository
     {
         return $this->getOrCreateQueryBuilder($qb)
             ->orderBy('a.publishedAt', 'DESC');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function findAllPublishedLastWeek(): mixed
+    {
+        return $this->published($this->latest())
+            ->andWhere('a.publishedAt >= :week_ago')
+            ->setParameter('week_ago', new DateTime('-7 days'))
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param string $dateFrom
+     * @param string $dateTo
+     * @return int
+     * @throws Exception
+     */
+    public function countPublishedByDate(string $dateFrom, string $dateTo): int
+    {
+        return $this->published($this->latest())
+            ->andWhere('a.publishedAt >= :from')
+            ->andWhere('a.publishedAt <= :to')
+            ->setParameter('from', new DateTime($dateFrom))
+            ->setParameter('to', new DateTime($dateTo))
+            ->select('COUNT(a.id) AS count')
+            ->getQuery()
+            ->getSingleResult()['count'];
+    }
+
+    /**
+     * @param string $dateFrom
+     * @param string $dateTo
+     * @return int
+     * @throws Exception
+     */
+    public function countCreatedByDate(string $dateFrom, string $dateTo): int
+    {
+        return $this->latest()
+            ->andWhere('a.createdAt >= :from')
+            ->andWhere('a.createdAt <= :to')
+            ->setParameter('from', new DateTime($dateFrom))
+            ->setParameter('to', new DateTime($dateTo))
+            ->select('COUNT(a.id) AS count')
+            ->getQuery()
+            ->getSingleResult()['count'];
     }
 
     /**

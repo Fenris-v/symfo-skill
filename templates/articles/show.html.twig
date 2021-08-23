@@ -11,8 +11,8 @@
         <div class="media d-flex align-content-center">
             {% if article.imageFilename %}
                 <a href="{{ upload_asset('article_uploads_url', article.imageFilename) }}" target="_blank">
-                    <img class="article-detail-image align-self-start mr-3 rounded"
-                         src="{{ upload_asset('article_uploads_url', article.imageFilename) | imagine_filter('articles_detail') }}">
+                <img class="article-detail-image align-self-start mr-3 rounded"
+                         src="{{ article.imageFilename | imagine_filter('articles_detail') }}">
                 </a>
             {% endif %}
             <div class="media-body d-inline-block align-self-center">

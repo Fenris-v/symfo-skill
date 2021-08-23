@@ -55,10 +55,10 @@ class ArticleFixtures extends BaseFixtures implements DependentFixtureInterface
                     ->setImageFilename(
                         $this->articleFileUploader
                             ->uploadFile(new File(dirname(__DIR__, 2) . '/public/images/' . $fileName))
-                    );
+                    )->setCreatedAt($this->faker->dateTimeBetween('-10days', '-1 days'));
 
                 if ($this->faker->boolean(60)) {
-                    $article->setPublishedAt($this->faker->dateTimeBetween('-100days', '-1 days'));
+                    $article->setPublishedAt($this->faker->dateTimeBetween('-10days', '-1 days'));
                 }
 
                 $tags = [];

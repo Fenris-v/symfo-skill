@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -45,5 +46,28 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->orderBy('u.firstName', 'ASC')
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function findAllSubscribedUsers(): mixed
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.isActive = 1')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return int
+     * @throws Exception
+     */
+    public function countUsers(): int
+    {
+        return $this->createQueryBuilder('u')
+            ->select('COUNT(u.id) AS count')
+            ->getQuery()
+            ->getSingleResult()['count'];
     }
 }
