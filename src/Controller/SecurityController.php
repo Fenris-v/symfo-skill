@@ -6,10 +6,13 @@ use App\Entity\User;
 use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
 use App\Security\LoginFormAuthenticator;
+use App\Service\Mailer;
 use Doctrine\ORM\EntityManagerInterface;
+use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -39,12 +42,20 @@ class SecurityController extends AbstractController
      */
     public function logout()
     {
-        throw new \LogicException(
+        throw new LogicException(
             'This method can be blank - it will be intercepted by the logout key on your firewall.'
         );
     }
 
     /**
+     * @param Request $request
+     * @param UserPasswordHasherInterface $userPasswordHasher
+     * @param UserAuthenticatorInterface $userAuthenticator
+     * @param LoginFormAuthenticator $loginFormAuthenticator
+     * @param EntityManagerInterface $em
+     * @param Mailer $mailer
+     * @return Response|null
+     * @throws TransportExceptionInterface
      * @Route("/register/", name="app_register")
      */
     public function register(
@@ -52,7 +63,8 @@ class SecurityController extends AbstractController
         UserPasswordHasherInterface $userPasswordHasher,
         UserAuthenticatorInterface $userAuthenticator,
         LoginFormAuthenticator $loginFormAuthenticator,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        Mailer $mailer
     ): ?Response {
         $form = $this->createForm(UserRegistrationFormType::class);
         $form->handleRequest($request);
@@ -74,6 +86,8 @@ class SecurityController extends AbstractController
 
             $em->persist($user);
             $em->flush();
+
+            $mailer->sendWelcomeMail($user);
 
             return $userAuthenticator->authenticateUser(
                 $user,
