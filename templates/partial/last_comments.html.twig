@@ -1,0 +1,17 @@
+<div class="col-md-12 col-xl-4">
+  <div class="text-center bg-primary text-white py-1 border border-bottom-0">
+    <h4 class="mb-0">Последние комменты</h4>
+  </div>
+  <div class="quotes-container bg-white shadow-sm border border-top-0 pb-2 pt-2 px-5">
+    {% for comment in comments %}
+      <div class="border-bottom mb-3">
+        <div class="h4 text-left"># {{ comment.article.title }}</div>
+        <p>
+          <i class="far fa-comment text-secondary"></i>
+          {{ comment.content | u.truncate(40, '...') }}<br> —
+          <a href="{{ path('app_home') }}">{{ comment.authorName }}, Верстак от бога</a>
+        </p>
+      </div>
+    {% endfor %}
+  </div>
+</div>

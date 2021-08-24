@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Events\UserRegisteredEvent;
 use App\Form\Model\UserRegistrationFormModel;
 use App\Form\UserRegistrationFormType;
 use App\Security\LoginFormAuthenticator;
@@ -10,6 +11,7 @@ use App\Service\Mailer;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -53,9 +55,8 @@ class SecurityController extends AbstractController
      * @param UserAuthenticatorInterface $userAuthenticator
      * @param LoginFormAuthenticator $loginFormAuthenticator
      * @param EntityManagerInterface $em
-     * @param Mailer $mailer
+     * @param EventDispatcherInterface $eventDispatcher
      * @return Response|null
-     * @throws TransportExceptionInterface
      * @Route("/register/", name="app_register")
      */
     public function register(
@@ -64,7 +65,7 @@ class SecurityController extends AbstractController
         UserAuthenticatorInterface $userAuthenticator,
         LoginFormAuthenticator $loginFormAuthenticator,
         EntityManagerInterface $em,
-        Mailer $mailer
+        EventDispatcherInterface $eventDispatcher
     ): ?Response {
         $form = $this->createForm(UserRegistrationFormType::class);
         $form->handleRequest($request);
@@ -87,7 +88,7 @@ class SecurityController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            $mailer->sendWelcomeMail($user);
+            $eventDispatcher->dispatch(new UserRegisteredEvent($user));
 
             return $userAuthenticator->authenticateUser(
                 $user,
