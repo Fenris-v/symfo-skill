@@ -6,7 +6,6 @@ use App\Entity\Article;
 use App\Exception\GenerateException;
 use App\Homework\ArticleContentProviderInterface;
 use App\Repository\ArticleRepository;
-use App\Repository\CommentRepository;
 use App\Service\SlackClient;
 use Http\Client\Exception;
 use Nexy\Slack\Exception\SlackApiException;
@@ -19,23 +18,16 @@ class ArticleController extends AbstractController
 {
     /**
      * @param ArticleRepository $repository
-     * @param CommentRepository $commentRepository
      * @return Response
      * @Route("/", name="app_home")
      */
-    public function homepage(
-        ArticleRepository $repository,
-        CommentRepository $commentRepository
-    ): Response {
+    public function homepage(ArticleRepository $repository): Response {
         $articles = $repository->findLatestPublished();
-
-        $lastComments = $commentRepository->getLatest();
 
         return $this->render(
             'articles/home.html.twig',
             [
-                'articles' => $articles,
-                'comments' => $lastComments
+                'articles' => $articles
             ]
         );
     }

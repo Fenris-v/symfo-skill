@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Article;
 use App\Entity\User;
 use Closure;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -40,6 +41,23 @@ class Mailer
             'Еженедельная рассылка',
             function (TemplatedEmail $email) use ($articles) {
                 $email->context(['articles' => $articles]);
+            }
+        );
+    }
+
+    /**
+     * @param User $user
+     * @param Article $article
+     * @throws TransportExceptionInterface
+     */
+    public function sendArticleCreatedNotification(User $user, Article $article)
+    {
+        $this->send(
+            'email/article_created_notification.html.twig',
+            $user,
+            'Создана статья',
+            function (TemplatedEmail $email) use ($article) {
+                $email->context(['article' => $article]);
             }
         );
     }

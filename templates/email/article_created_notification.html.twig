@@ -1,0 +1,27 @@
+{% extends 'email/base.html.twig' %}
+
+{% block content %}
+    <div class="content">
+        <table>
+            <tr>
+                <td>
+                    <h1>Создана новая статья!</h1>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="content">
+        <table>
+            <tr>
+                <td class="small post-image" width="20%">
+                    <img src="{{ article.imageFilename | imagine_filter('articles_preview') }}" alt=""/>
+                </td>
+                <td>
+                    <h3>{{ article.title }} <small>{{ article.author.firstName }}</small></h3>
+                    <p class="">{{ article.description }}</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

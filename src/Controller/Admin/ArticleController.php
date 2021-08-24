@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Article;
 use App\Entity\User;
+use App\Events\ArticleCreatedEvent;
 use App\Form\ArticleFormType;
 use App\Homework\ArticleWordsFilter;
 use App\Repository\ArticleRepository;
@@ -11,6 +12,7 @@ use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Flysystem\FilesystemException;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -52,7 +54,9 @@ class ArticleController extends AbstractController
      * @param Request $request
      * @param ArticleWordsFilter $articleWordsFilter
      * @param FileUploader $articleFileUploader
+     * @param EventDispatcherInterface $eventDispatcher
      * @return Response
+     * @throws FilesystemException
      * @Route("/admin/articles/create/", name="app_admin_article_create")
      * @IsGranted("ROLE_ADMIN_ARTICLE")
      */
@@ -60,11 +64,14 @@ class ArticleController extends AbstractController
         EntityManagerInterface $em,
         Request $request,
         ArticleWordsFilter $articleWordsFilter,
-        FileUploader $articleFileUploader
+        FileUploader $articleFileUploader,
+        EventDispatcherInterface $eventDispatcher
     ): Response {
         $form = $this->createForm(ArticleFormType::class, new Article());
 
-        if ($this->handlerFormRequest($form, $request, $em, $articleWordsFilter, $articleFileUploader)) {
+        if ($article = $this->handlerFormRequest($form, $request, $em, $articleWordsFilter, $articleFileUploader)) {
+            $eventDispatcher->dispatch(new ArticleCreatedEvent($article));
+
             $this->addFlash('flash_message', 'Статья успешно создана');
 
             return $this->redirectToRoute('app_admin_articles');
@@ -85,6 +92,7 @@ class ArticleController extends AbstractController
      * @return Response
      * @Route("/admin/articles/{id}/edit/", name="app_admin_article_edit")
      * @IsGranted("MANAGE", subject="article")
+     * @throws FilesystemException
      */
     public function edit(
         Article $article,

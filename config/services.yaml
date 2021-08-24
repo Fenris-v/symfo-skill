@@ -59,3 +59,7 @@ services:
 #    App\Service\FileUploader:
 #        arguments:
 #            $uploadsPath: '%article_uploads_dir%'
+
+    App\EventListener\ExampleEventListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: 'onEventHappen' }
