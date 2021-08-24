@@ -24,6 +24,9 @@ services:
             $debug: '%kernel.debug%'
             Demontpx\ParsedownBundle\Parsedown: '@demontpx_parsedown.parsedown'
             $markAsBold: '%env(bool:MARK_ARTICLE_WORDS_WITH_BOLD)%'
+            $reportEmail: '%env(EMAIL_FOR_REPORT)%'
+            $emailForSend: '%env(EMAIL_FOR_SEND)%'
+            $siteName: '%env(SITE_NAME)%'
 
             League\Flysystem\FilesystemOperator $articleFileSystem: '@oneup_flysystem.uploads_articles_filesystem'
 

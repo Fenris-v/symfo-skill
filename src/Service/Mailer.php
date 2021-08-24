@@ -11,8 +11,11 @@ use Symfony\Component\Mime\Address;
 
 class Mailer
 {
-    public function __construct(private MailerInterface $mailer)
-    {
+    public function __construct(
+        private MailerInterface $mailer,
+        private string $siteName,
+        private string $emailForSend
+    ) {
     }
 
     /**
@@ -51,7 +54,7 @@ class Mailer
     private function send(string $template, User $user, string $subject, Closure $callback = null)
     {
         $email = (new TemplatedEmail())
-            ->from(new Address('noreply@symfony.skillbox', 'Spill-Coffee-On-The-Keyboard'))
+            ->from(new Address($this->emailForSend, $this->siteName))
             ->to(new Address($user->getEmail(), $user->getFirstName()))
             ->subject($subject)
             ->htmlTemplate($template);
