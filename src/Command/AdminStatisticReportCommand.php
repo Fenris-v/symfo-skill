@@ -28,7 +28,9 @@ class AdminStatisticReportCommand extends Command
     public function __construct(
         private MailerInterface $mailer,
         private ArticleRepository $articleRepository,
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
+        private string $siteName,
+        private string $reportEmail
     ) {
         parent::__construct();
     }
@@ -87,7 +89,7 @@ class AdminStatisticReportCommand extends Command
         );
 
         $email = (new TemplatedEmail())
-            ->from(new Address('report@symfony.skillbox', 'Report'))
+            ->from(new Address($this->reportEmail, $this->siteName))
             ->to($email)
             ->subject('Отчет')
             ->html('<h1>Отчет по сайту</h1>')
