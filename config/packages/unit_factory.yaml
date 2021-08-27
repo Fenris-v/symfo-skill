@@ -1,4 +1,3 @@
 unit_factory:
-  enableSolder: true
-  enableArcher: true
   strategy: App\Service\BillGatesStrategy
+  unit_provider: App\Service\CustomUnitProvider

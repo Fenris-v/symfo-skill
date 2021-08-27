@@ -18,13 +18,9 @@ class Configuration implements ConfigurationInterface
             ->defaultNull()
             ->info('Factory strategy')
             ->end()
-            ->booleanNode('enableSolder')
-            ->defaultTrue()
-            ->info('Enable solder')
-            ->end()
-            ->booleanNode('enableArcher')
-            ->defaultTrue()
-            ->info('Enable archer');
+            ->scalarNode('unit_provider')
+            ->defaultNull()
+            ->info('Units list');
 
         return $treeBuilder;
     }

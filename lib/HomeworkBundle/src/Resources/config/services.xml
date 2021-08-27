@@ -10,7 +10,11 @@
         <service id="symfony_skillbox_homework.unit_factory"
                 class="SymfonySkillbox\HomeworkBundle\UnitFactory" public="true">
             <argument type="service" id="symfony_skillbox_homework.strategy" />
+            <argument type="service" id="symfony_skillbox_homework.unit_provider" />
         </service>
+
+        <service id="symfony_skillbox_homework.unit_provider"
+                class="SymfonySkillbox\HomeworkBundle\BaseUnitProvider" public="false" />
 
         <service id="symfony_skillbox_homework.strength_strategy"
                 class="SymfonySkillbox\HomeworkBundle\StrengthStrategy" public="false" />

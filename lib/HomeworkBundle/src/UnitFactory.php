@@ -14,8 +14,7 @@ class UnitFactory extends Command
 
     public function __construct(
         private StrategyInterface $strategy,
-        private bool $enableSolder,
-        private bool $enableArcher
+        private UnitProviderInterface $unitProvider
     ) {
         parent::__construct();
     }
@@ -60,7 +59,7 @@ class UnitFactory extends Command
      */
     private function produceUnits(int $resources): array
     {
-        $units = $this->strategy->sortUnits($this->getUnits());
+        $units = $this->strategy->sortUnits($this->unitProvider->getUnits());
 
         $army = [];
         while ($unit = $this->strategy->next($units, $resources)) {
@@ -69,26 +68,5 @@ class UnitFactory extends Command
         }
 
         return $army;
-    }
-
-    /**
-     * Формирует список доступных юнитов на фабрике
-     * @return Unit[]
-     */
-    private function getUnits(): array
-    {
-        $units = [
-            new Unit('Крестьянин', 33, 1, 1),
-        ];
-
-        if ($this->enableSolder) {
-            $units[] = new Unit('Солдат', 100, 5, 100);
-        }
-
-        if ($this->enableArcher) {
-            $units[] = new Unit('Лучник', 150, 6, 50);
-        }
-
-        return $units;
     }
 }

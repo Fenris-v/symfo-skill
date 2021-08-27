@@ -28,14 +28,13 @@ class HomeworkExtension extends Extension
 
         $config = $this->processConfiguration($configuration, $configs);
 
-        $definition = $container->getDefinition('symfony_skillbox_homework.unit_factory');
-
         if (null !== $config['strategy']) {
             $container->setAlias('symfony_skillbox_homework.strategy', $config['strategy']);
         }
 
-        $definition->setArgument(1, $config['enableSolder']);
-        $definition->setArgument(2, $config['enableArcher']);
+        if (null !== $config['unit_provider']) {
+            $container->setAlias('symfony_skillbox_homework.unit_provider', $config['unit_provider']);
+        }
     }
 
     /**
