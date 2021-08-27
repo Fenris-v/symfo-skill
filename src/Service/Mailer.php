@@ -69,8 +69,12 @@ class Mailer
      * @param Closure|null $callback
      * @throws TransportExceptionInterface
      */
-    private function send(string $template, User $user, string $subject, Closure $callback = null)
-    {
+    private function send(
+        string $template,
+        User $user,
+        string $subject,
+        Closure $callback = null
+    ) {
         $email = (new TemplatedEmail())
             ->from(new Address($this->emailForSend, $this->siteName))
             ->to(new Address($user->getEmail(), $user->getFirstName()))

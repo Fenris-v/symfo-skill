@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults autowire="true" autoconfigure="true"/>
+
+        <service id="symfony_skillbox_homework.unit_factory"
+                class="SymfonySkillbox\HomeworkBundle\UnitFactory" public="true">
+            <argument type="service" id="symfony_skillbox_homework.strategy" />
+        </service>
+
+        <service id="symfony_skillbox_homework.strength_strategy"
+                class="SymfonySkillbox\HomeworkBundle\StrengthStrategy" public="false" />
+        <service id="symfony_skillbox_homework.strategy"
+                alias="symfony_skillbox_homework.strength_strategy" public="false" />
+
+        <service alias="symfony_skillbox_homework.unit_factory"
+                id="SymfonySkillbox\HomeworkBundle\UnitFactory" public="false" />
+    </services>
+</container>

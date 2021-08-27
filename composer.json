@@ -3,6 +3,12 @@
     "license": "proprietary",
     "minimum-stability": "stable",
     "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "lib/HomeworkBundle"
+        }
+    ],
     "require": {
         "php": "^8.0",
         "ext-ctype": "*",
@@ -23,6 +29,7 @@
         "php-http/guzzle6-adapter": "^2.0",
         "phpdocumentor/reflection-docblock": "^5.2",
         "sensio/framework-extra-bundle": "^6.1",
+        "skillbox/homework": "dev-master",
         "stof/doctrine-extensions-bundle": "^1.6",
         "symfony/asset": "5.3.*",
         "symfony/console": "5.3.*",

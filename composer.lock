@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a2a9a20d0e04240e1f45b8d88e95ab9e",
+    "content-hash": "bd01e0a3d3b032c44e3605f8c86cd7a1",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -4498,6 +4498,37 @@
             "time": "2021-05-31T10:40:46+00:00"
         },
         {
+            "name": "skillbox/homework",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "lib/HomeworkBundle",
+                "reference": "5477352d2dda9ffa03223222fba4649e2928a031"
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "SymfonySkillbox\\HomeworkBundle\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Василенко Анатолий",
+                    "role": "author"
+                }
+            ],
+            "description": "Unit factory",
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "stof/doctrine-extensions-bundle",
             "version": "v1.6.0",
             "source": {
@@ -5840,16 +5871,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v1.14.4",
+            "version": "v1.14.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "ddddba0343a225ba5fa638b64b132fc8754a9579"
+                "reference": "2aae1ef7541d855962de3834d22186585d4f2049"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/ddddba0343a225ba5fa638b64b132fc8754a9579",
-                "reference": "ddddba0343a225ba5fa638b64b132fc8754a9579",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/2aae1ef7541d855962de3834d22186585d4f2049",
+                "reference": "2aae1ef7541d855962de3834d22186585d4f2049",
                 "shasum": ""
             },
             "require": {
@@ -5888,7 +5919,7 @@
             "description": "Composer plugin for Symfony",
             "support": {
                 "issues": "https://github.com/symfony/flex/issues",
-                "source": "https://github.com/symfony/flex/tree/v1.14.4"
+                "source": "https://github.com/symfony/flex/tree/v1.14.6"
             },
             "funding": [
                 {
@@ -5904,7 +5935,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-08-24T18:59:38+00:00"
+            "time": "2021-08-27T14:11:31+00:00"
         },
         {
             "name": "symfony/form",
@@ -10409,7 +10440,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "skillbox/homework": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
